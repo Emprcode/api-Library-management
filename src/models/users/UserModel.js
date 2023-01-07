@@ -1,4 +1,4 @@
-import UserSchema from "./UserSchema"
+import UserSchema from "./UserSchema.js"
 
 export const getUserByEmail = (email) => {
     return UserSchema.findOne({email})

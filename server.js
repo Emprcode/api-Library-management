@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./src/config/dbConfig.js";
 import morgan from "morgan";
 import cors from "cors";
-import router from "./src/routers/Router.js";
+import router from "./src/routers/UserRouter.js";
 
 dotenv.config();
 const app = express();
@@ -19,7 +19,8 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-app.use("/", router);
+// api route
+app.use("/api/v1/user", router);
 
 app.use("*", (req, res, next) => {
   const error = {

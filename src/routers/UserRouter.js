@@ -1,6 +1,6 @@
 import express from "express";
-import { hashPassword } from "../helpers/bcryptHelper";
-import { getUserByEmail } from "../models/users/UserModel";
+import { hashPassword } from "../helpers/bcryptHelper.js";
+import { createUser, getUserByEmail } from "../models/users/UserModel.js";
 
 const router = express.Router();
 
