@@ -7,3 +7,6 @@ export const getUserByEmail = (email) => {
 export const createUser = (userData) => {
     return UserSchema(userData).save()
 }
+export const getUser = (userData) => {
+    return UserSchema.findOne(userData)
+}

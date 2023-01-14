@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import { connectDB } from "./src/config/dbConfig.js";
 import morgan from "morgan";
 import cors from "cors";
-import router from "./src/routers/UserRouter.js";
+import UserRouter from "./src/routers/UserRouter.js";
+import BookRouter from "./src/routers/BookRouter.js";
+import { isAuth } from "./src/middlewares/authMiddleware.js";
 
 dotenv.config();
 const app = express();
@@ -20,7 +22,8 @@ app.use(cors());
 app.use(morgan("dev"));
 
 // api route
-app.use("/api/v1/user", router);
+app.use("/api/v1/user", UserRouter);
+app.use("/api/v1/book",isAuth, BookRouter)
 
 app.use("*", (req, res, next) => {
   const error = {
