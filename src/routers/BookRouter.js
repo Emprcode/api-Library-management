@@ -122,4 +122,31 @@ router.delete("/", async (req, res, next) => {
   }
 });
 
+// book router
+
+router.patch("/return", async (req, res, next) => {
+  try {
+    const book = await getBookById(req.body.bookId);
+    const user = await getUserById(req.headers.authorization);
+
+    if (book?._id && user._id) {
+      const result = await findBookAndUpdate(book._id, {
+        $pull: { borrowedBy: user._id },
+      });
+
+      result?._id
+        ? res.json({
+            status: "success",
+            message: "You have returned this book",
+          })
+        : res.json({
+            status: "error",
+            message: "Unable to return this book, please try again later",
+          });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
