@@ -8,6 +8,7 @@ import {
   getBookByIsbn,
   getBorrowedBooks,
 } from "../models/book/BookModel.js";
+import { postTransaction } from "../models/transactions/TransactionModel.js";
 import { getUserById } from "../models/users/UserModel.js";
 
 const router = express.Router();
@@ -84,20 +85,36 @@ router.post("/borrow", async (req, res, next) => {
         });
       }
     }
-    const updateBook = await findBookAndUpdate(bookId, {
-      borrowedBy: [...book.borrowedBy, user._id],
-    });
+    
 
-    updateBook?._id
-      ? res.json({
-          status: "success",
-          message: "you have borrowed this book",
-          updateBook,
-        })
-      : res.json({
-          status: "error",
-          message: "something went wrong, please try again later",
-        });
+    const { isbn, thumbnail, title, author, year} = book
+    const transactions = await postTransaction({
+      borrowedBy:user._id,
+      borrowedBook:{isbn, thumbnail, title, author, year}
+    })
+
+    if (transactions?._id) {
+      const updateBook = await findBookAndUpdate(bookId, {
+        borrowedBy: [...book.borrowedBy, user._id],
+      });
+      
+    return  updateBook?._id
+        ? res.json({
+            status: "success",
+            message: "you have borrowed this book",
+            updateBook,
+          })
+        : res.json({
+            status: "error",
+            message: "something went wrong, please try again later",
+          });
+    }
+
+    return res.json({
+      status:"error",
+      message:"unable to create transaction!"
+    })
+
   } catch (error) {
     next(error);
   }

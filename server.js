@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import UserRouter from "./src/routers/UserRouter.js";
 import BookRouter from "./src/routers/BookRouter.js";
+import TransactionRouter from "./src/routers/TransactionRouter.js";
 import { isAuth } from "./src/middlewares/authMiddleware.js";
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(morgan("dev"));
 // api route
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/book",isAuth, BookRouter)
+app.use("/api/v1/transaction", TransactionRouter)
 
 app.use("*", (req, res, next) => {
   const error = {
