@@ -14,3 +14,7 @@ export const getUser = (userData) => {
 export const getUserById = (userId) => {
     return UserSchema.findById(userId)
 }
+
+export const updateUserInfo = (userId, userData)=> {
+    return UserSchema.findOneAndUpdate(userId, userData, {new:true})
+}

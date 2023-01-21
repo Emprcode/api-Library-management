@@ -8,7 +8,7 @@ import {
   getBookByIsbn,
   getBorrowedBooks,
 } from "../models/book/BookModel.js";
-import { getAllTransactionByQuery, postTransaction, updateTransaction } from "../models/transactions/TransactionModel.js";
+import { getTransactionByQuery, postTransaction, updateTransaction } from "../models/transactions/TransactionModel.js";
 import { getUserById } from "../models/users/UserModel.js";
 
 const router = express.Router();
@@ -150,10 +150,13 @@ router.patch("/return", async (req, res, next) => {
     const book = await getBookById(req.body.bookId);
     const user = await getUserById(req.headers.authorization);
 
-    const transaction = await getAllTransactionByQuery(user._id, user.isbn)
+    const transaction = await getTransactionByQuery(user._id, user.isbn)
 
-    const updateTrans = await updateTransaction(transaction?._id, { returnDate: new Date(),
-    })
+    console.log(transaction)
+
+    const updateTrans = await updateTransaction(transaction?._id, { returnDate: new Date()})
+
+
 
     if (updateTrans?.returnDate) {
       const result = await findBookAndUpdate(book._id, {

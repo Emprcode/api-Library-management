@@ -1,6 +1,6 @@
 import express from "express";
 import { comparePassword, hashPassword } from "../helpers/bcryptHelper.js";
-import { createUser, getUserByEmail } from "../models/users/UserModel.js";
+import { createUser, getUserByEmail, getUserById, updateUserInfo } from "../models/users/UserModel.js";
 
 const router = express.Router();
 
@@ -70,5 +70,45 @@ router.post("/login", async (req, res, next) => {
     next(error);
   }
 });
+
+
+//update password
+
+router.patch("/password-update", async(req, res, next)=> {
+  try {
+    const user = await getUserById(req.headers.authorization)
+    const {currentPassword} = req.body
+
+    const passMatch = comparePassword(currentPassword, user?.password)
+    if (passMatch){
+      const hashedPass = hashPassword(req.body.password)
+
+      if (hashedPass) {
+        const u = await updateUserInfo({_id:user._id}, {password:hashedPass})      
+
+        u?._id ? res.json({
+          status:"success",
+          message:"Password Updated successfully!"
+        }) : res.json({
+          status:"error",
+          message:"unable to update password, please try again later!"
+        })
+      }
+      return res.json({
+        status:"error",
+        message:"unable to update password!"
+      })
+    }
+  } catch (error) {
+    
+  }
+})
+
+
+
+
+
+
+
 
 export default router;
