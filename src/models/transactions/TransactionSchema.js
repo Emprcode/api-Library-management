@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 const TransactionSchema = new mongoose.Schema(
   {
     borrowedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+      userFname: { type: String },
+      userLname: { type: String },
     },
     borrowedBook: {
       isbn: {

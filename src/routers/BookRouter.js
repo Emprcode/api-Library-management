@@ -8,7 +8,7 @@ import {
   getBookByIsbn,
   getBorrowedBooks,
 } from "../models/book/BookModel.js";
-import { postTransaction } from "../models/transactions/TransactionModel.js";
+import { getAllTransactionByQuery, postTransaction, updateTransaction } from "../models/transactions/TransactionModel.js";
 import { getUserById } from "../models/users/UserModel.js";
 
 const router = express.Router();
@@ -89,7 +89,11 @@ router.post("/borrow", async (req, res, next) => {
 
     const { isbn, thumbnail, title, author, year} = book
     const transactions = await postTransaction({
-      borrowedBy:user._id,
+      borrowedBy:{
+        userId: user._id,
+        userFname: user.fName,
+        userLname : user.lName
+      },
       borrowedBook:{isbn, thumbnail, title, author, year}
     })
 
@@ -146,7 +150,12 @@ router.patch("/return", async (req, res, next) => {
     const book = await getBookById(req.body.bookId);
     const user = await getUserById(req.headers.authorization);
 
-    if (book?._id && user._id) {
+    const transaction = await getAllTransactionByQuery(user._id, user.isbn)
+
+    const updateTrans = await updateTransaction(transaction?._id, { returnDate: new Date(),
+    })
+
+    if (updateTrans?.returnDate) {
       const result = await findBookAndUpdate(book._id, {
         $pull: { borrowedBy: user._id },
       });
