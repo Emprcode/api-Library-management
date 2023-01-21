@@ -1,5 +1,6 @@
 import express from "express";
 import { comparePassword, hashPassword } from "../helpers/bcryptHelper.js";
+import { isAuth } from "../middlewares/authMiddleware.js";
 import { createUser, getUserByEmail, getUserById, updateUserInfo } from "../models/users/UserModel.js";
 
 const router = express.Router();
@@ -74,7 +75,7 @@ router.post("/login", async (req, res, next) => {
 
 //update password
 
-router.patch("/password-update", async(req, res, next)=> {
+router.patch("/password-update", isAuth, async(req, res, next)=> {
   try {
     const user = await getUserById(req.headers.authorization)
     const {currentPassword} = req.body
